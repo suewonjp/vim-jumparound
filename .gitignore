@@ -1,0 +1,11 @@
+*~
+.DS_Store
+.swp
+.orig
+.log
+.trashcan
+tags
+Session.vim
+.vimrc
+.memo
+

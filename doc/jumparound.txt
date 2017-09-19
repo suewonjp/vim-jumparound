@@ -1,0 +1,127 @@
+*jumparound.txt*         Plugin for quickly jumping around your content
+
+===============================================================================
+Author:       Suewon Bahng <https://github.com/suewonjp/>
+Version:      1.0
+License: Same terms as Vim itself (see |license|)
+
+This plugin is only available if 'compatible' is not set and
+Vim version is 7.0 or later
+
+===============================================================================
+INTRODUCTION                         *ja* *JA* *jumparound*
+
+This plugin provides mappings and commands for:
+
+- Quick Jump between Tab pages/Windows/Marks     *ja-jumping*
+- Quick Text Search                              *ja-quick-search* 
+- Easy Use of Quickfix List                      *ja-quickfix* 
+
+===============================================================================
+FEATURES                                                 *ja-features*
+
+QUICK JUMP IN BETWEEN BUFFERS                               *ja-jumping*
+-----------------------------
+
+When you edit multiple files, efficiently jumping back and forth in between
+tab pages, windows, marks is very important to your productivity. This plugin
+will greatly help you quickly navigate across or within buffers.
+
+Jumping to Tab Pages: ~
+
+*<M-l>*  *<M-h>* *ja-jump-to-tab-pages*
+<M-l> (press ALT + L) is equivalent to |gt| command. It will let you go to the
+next tab page.
+<M-h> (press ALT + H) is equivalent to |gT| command. It will let you go to the
+previous tab page.
+Note that these mappings would work for not only Normal mode, but also
+Insert mode, Visual mode, Command mode.
+
+*{num}<TAB>*
+{num} is 0..9 (0 and 9 included).
+You can jump to a certain tab page by directly specifying its number. The
+number 1 is assigned to the left most tab page and the number 2 is assigned to
+the next one, and so on.
+
+0<TAB> is for a special movement, which jumps to the previously accessed tab
+page.
+
+You can disable this mapping by adding the following code in your .vimrc >
+
+    let g:ja_add_nr_tab_mappings = 0
+<
+
+Jumping to Windows: ~
+
+*<M-K>* *<M-J>* *<M-H>* *<M-L>* *ja-jump-to-windows*
+These mappings will let your cursor move to other windows. Note that, for
+instance, <M-K> means you should press ALT + SHIFT + K simultaneously. And
+<M-K> will let your cursor move to another window above the current one.
+Likewise, <M-L> will let your cursor move to another window right of the
+current one. 
+Note that these mappings would work for not only Normal mode, but also
+Insert mode, Visual mode, Command mode.
+
+*{num}<CR>*
+{num} is 0..9 (0 and 9 included).
+You can jump to a certain window by directly specifying its number. The number
+1 is assigned to the top left window, the last number is assigned to the
+bottom right window.
+
+0<CR> is for a special movement, which jumps to the previously accessed window.
+It is equivalent to |CTRL-W_P|.
+
+You can disable this mapping by adding the following code in your .vimrc >
+
+    let g:ja_add_nr_cr_mappings = 0
+<
+
+Jumping to Marks: ~
+
+You can disable these mappings by adding the following code in your .vimrc >
+
+    let g:ja_add_space_marks = 0
+<
+
+*<SPACE>{0-9a-zA-Z}*
+It lets you jump to the mark. It is equivalent to |`{a-zA-Z}| and |`{0-9}|.
+
+This mapping has some advantages over the default mappings. Depending on the
+keyboard layout, the position of ' or ` key is different, and this may become a
+small issue, when you need to deal with multiple machines. (e.g., your personal laptop,
+your office laptop, your personal desktop, your office desktop, ...) This
+mapping will let you jump to marks with a consistent key input so you don't
+need to care about specific keyboard layouts.
+And it's much easier to type.
+
+*0<SPACE>*
+This is equivalent to |``|. It basically lets you jump to the position before
+the last jump. 
+
+*<SPACE><CR>*
+This is a mapping for setting marks. It's equivalent to |m|. Mostly, using the
+original command would be more convenient but it has one advantage when you
+use Vim's builtin file explorer Netrw |netrw-contents|.
+Netrw defined a bunch of mappings starting with |m| and you can't use certain
+mark names in a Netrw window. (e.g., Typing mm won't let you set mark m in Netrw
+window. It will invoke |netrw-mm| instead)
+However, this mapping will let you overcome that limitation.
+
+QUICK TEXT SEARCH                                       *ja-quick-search*
+-----------------
+
+Text search is also important in terms of navigation. This plugin provides
+many mappings to enhance your text search activites.
+
+EASY USE OF QUICKFIX LIST                               *ja-quickfix*
+-------------------------
+
+This plugin also provides many mappings to enhance Quickfix list
+manipulations.
+
+===============================================================================
+CONFIGURATION                                           *ja-configuration* 
+
+===============================================================================
+ISSUES                                                  *ja-issues* 
+
