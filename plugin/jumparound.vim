@@ -10,79 +10,150 @@ endif
 let g:loaded_jumparound = 1
 
 " ============================================================================
+" GENERAL FUNCTIONS {{{1
+" ============================================================================
+
+if ! exists('g:ja_check_mapping_confliction')
+  let g:ja_check_mapping_confliction = 0
+endif
+
+function! <SID>CheckMapping(map, mode, abbr)
+  if g:ja_check_mapping_confliction
+    if maparg(a:map, a:mode, a:abbr) != ''
+      call jumparound#Msg('Mapping conflict detected! : ' . a:map)
+    endif
+  endi
+endfunction
+
+function! <SID>MapForEveryMajorMode(lhs, rhs, alias)
+  if maparg(a:alias, 'n') == ''
+    exe 'nnoremap <silent>' a:alias  a:rhs == '' ? '<NOP>' : a:rhs
+  endif
+  if maparg(a:alias, 'i') == ''
+    exe 'inoremap <silent>' a:alias '<ESC>' . a:rhs
+  endif
+  if maparg(a:alias, 'v') == ''
+    exe 'vnoremap <silent>' a:alias 'o<ESC>' . a:rhs
+  endif
+  if maparg(a:alias, 'c') == ''
+    exe 'cnoremap <silent>' a:alias '<C-e><C-u><BS>' . a:rhs
+  endif
+
+  if ! hasmapto(a:alias, 'n')
+    call <SID>CheckMapping(a:lhs, 'n', 0)
+    exe 'nmap' a:lhs  a:alias
+  endif
+  if ! hasmapto(a:alias, 'i')
+    call <SID>CheckMapping(a:lhs, 'i', 0)
+    exe 'imap' a:lhs  a:alias
+  endif
+  if ! hasmapto(a:alias, 'v')
+    call <SID>CheckMapping(a:lhs, 'v', 0)
+    exe 'vmap' a:lhs  a:alias
+  endif
+  if ! hasmapto(a:alias, 'c')
+    call <SID>CheckMapping(a:lhs, 'c', 0)
+    exe 'cmap' a:lhs  a:alias
+  endif
+endfunction
+
+function! <SID>MapForSingleMode(mode, lhs, rhs, alias)
+  exe a:mode . 'noremap <silent>' a:alias a:rhs
+  if ! hasmapto(a:alias, a:mode)
+    call <SID>CheckMapping(a:lhs, a:mode, 0)
+    exe a:mode . 'map' a:lhs a:alias
+  endif
+endfunction
+
+function! <SID>AbbrForSingleMode(mode, lhs, rhs)
+  call <SID>CheckMapping(a:lhs, a:mode, 1)
+  exe a:mode . 'noreabbr' a:lhs a:rhs
+endfunction
+
+" }}}1
+
+" ============================================================================
 " JUMPING AROUND TABS/WINDOWS/MARKS {{{1
 " ============================================================================
 
-" Bind Alt(Meta) key combinations {{{2
-exe "set <M-l>=\el"
-exe "set <M-h>=\eh"
-exe "set <M-L>=\eL"
-exe "set <M-H>=\eH"
-exe "set <M-J>=\eJ"
-exe "set <M-K>=\eK"
-exe "set <M-t>=\et"
-exe "set <M-x>=\ex"
-exe "set <M-s>=\es"
-exe "set <M-y>=\ey"
-" }}}2
+" Define Alt(Meta) key mappings for tab pages/windows navigation and etc. {{{2
 
-" Define <M-...> mappings for tab pages/windows navigation {{{2
+" Bind Alt(Meta) key combinations {{{3
+if ! exists('g:ja_bind_alt_meta_mappings') || g:ja_bind_alt_meta_mappings
+  exe "set <M-l>=\el"
+  exe "set <M-h>=\eh"
+  exe "set <M-L>=\eL"
+  exe "set <M-H>=\eH"
+  exe "set <M-J>=\eJ"
+  exe "set <M-K>=\eK"
+  exe "set <M-t>=\et"
+  exe "set <M-x>=\ex"
+  exe "set <M-s>=\es"
+  exe "set <M-y>=\ey"
+endif
+" }}}3
 
-" Switch to normal mode from other modes
-" This may be quicker than pressing <ESC>
-inoremap <expr><silent><M-y> pumvisible() ? '<C-y><ESC>' : '<ESC>'
-vnoremap <M-y> o<ESC>
-cnoremap <M-y> <C-e><C-u><BS>
-
-" Make the given mapping work consistently for every major mode
-function! <SID>MapForEveryMode(lhs, rhs)
-  exe 'nnoremap ' . a:lhs ' ' . a:rhs
-  exe 'inoremap ' . a:lhs ' <ESC>' . a:rhs
-  exe 'vnoremap ' . a:lhs ' o<ESC>' . a:rhs
-  exe 'cnoremap ' . a:lhs ' <C-e><C-u><BS>' . a:rhs
-endfunction
-
-" Save the buffer and switch to the normal mode unless it is
-call <SID>MapForEveryMode('<M-s>', ' :<C-u>w<CR>')
+" Define <M-...> mappings for tab pages/windows navigation {{{3
 
 " Move to next tab page
-call <SID>MapForEveryMode(
-      \ '<silent> <M-l>', ' :<C-u>call jumparound#GoToTabPage("++")<CR>')
+call <SID>MapForEveryMajorMode(
+      \ '<M-l>', ' :<C-u>call jumparound#GoToTabPage("++")<CR>',
+      \ '<Plug>JumparoundGoToNextTabPage')
 
 " Move to previous tab page
-call <SID>MapForEveryMode(
-      \ '<silent> <M-h>', ' :<C-u>call jumparound#GoToTabPage("--")<CR>')
+call <SID>MapForEveryMajorMode(
+      \ '<M-h>', ' :<C-u>call jumparound#GoToTabPage("--")<CR>',
+      \ '<Plug>JumparoundGoToPrevTabPage')
 
 " Move to upper window
-call <SID>MapForEveryMode(
-      \ '<silent> <M-K>',
-      \ ' :<C-u>call jumparound#JumpToWindowWithWrap("k", "j")<CR>')
+call <SID>MapForEveryMajorMode(
+      \ '<M-K>',
+      \ ' :<C-u>call jumparound#JumpToWindowWithWrap("k", "j")<CR>',
+      \ '<Plug>JumparoundGoToUpperWindow')
 
 " Move to lower window
-call <SID>MapForEveryMode(
-      \ '<silent> <M-J>',
-      \ ' :<C-u>call jumparound#JumpToWindowWithWrap("j", "k")<CR>')
+call <SID>MapForEveryMajorMode(
+      \ '<M-J>',
+      \ ' :<C-u>call jumparound#JumpToWindowWithWrap("j", "k")<CR>',
+      \ ' <Plug>JumparoundGoToLowerWindow')
 
 " Move to left window
-call <SID>MapForEveryMode(
-      \ '<silent> <M-H>',
-      \ ' :<C-u>call jumparound#JumpToWindowWithWrap("h", "l")<CR>')
+call <SID>MapForEveryMajorMode(
+      \ '<M-H>',
+      \ ' :<C-u>call jumparound#JumpToWindowWithWrap("h", "l")<CR>',
+      \ ' <Plug>JumparoundGoToLeftWindow')
 
 " Move to right window
-call <SID>MapForEveryMode(
-      \ '<silent> <M-L>',
-      \ ' :<C-u>call jumparound#JumpToWindowWithWrap("l", "h")<CR>')
+call <SID>MapForEveryMajorMode(
+      \ '<M-L>',
+      \ ' :<C-u>call jumparound#JumpToWindowWithWrap("l", "h")<CR>',
+      \ ' <Plug>JumparoundGoToRightWindow')
 
-" Open a file explorer at the parent directory of % (the current file)
-" in a new tab
-call <SID>MapForEveryMode(
-      \ '<silent> <M-t>', ' :<C-u>Tex %:p:h<CR>')
+" Open a file explorer in a new tab
+call <SID>MapForEveryMajorMode(
+      \ '<M-t>', ' :<C-u>Tex %:p:h<CR>',
+      \ ' <Plug>JumparoundOpenTex')
 
-" Open a file explorer at the parent directory of %
-" in a horizontal split window.
-" Use the same mapping to close it.
-call <SID>MapForEveryMode(
-      \ '<silent> <M-x>', ' :<C-u>call jumparound#ToggleLex()<CR>')
+" Open a file explorer in a horizontal split window.
+call <SID>MapForEveryMajorMode(
+      \ '<M-x>', ' :<C-u>call jumparound#ToggleLex()<CR>',
+      \ ' <Plug>JumparoundToggleLex')
+
+" }}}3
+
+" Other mappings using Alt(Meta) key {{{3
+
+" Switch to the Normal mode
+inoremap <expr><silent> <Plug>JumparoundGoBackToNmlMode
+      \ pumvisible() ? '<C-y><ESC>' : '<ESC>'
+call <SID>MapForEveryMajorMode('<M-y>', '', '<Plug>JumparoundGoBackToNmlMode')
+
+" Save the buffer and switch to the Normal mode
+call <SID>MapForEveryMajorMode('<M-s>', ' :<C-u>w<CR>',
+      \ '<Plug>JumparoundSaveBufAndGoToNmlMode')
+
+" }}}3
+
 " }}}2
 
 " Jump to tab page by specifying its number {{{2
@@ -90,15 +161,18 @@ if ! exists('g:ja_add_nr_tab_mappings') || g:ja_add_nr_tab_mappings
   let s:max = 9
   let s:i = 1
   while s:i <= s:max
-    " nnoremap N<Tab> :call jumparound#GoToTabPage('N')
+    " nnoremap N<Tab> :call jumparound#GoToTabPage('N')<CR>
     " where N is 1 ~ 9
-    exe 'nnoremap <silent> ' . s:i . '<Tab>'
-          \ ' :<C-u>call jumparound#GoToTabPage(' . s:i . ')<CR>'
+    call <SID>MapForSingleMode('n', s:i . '<TAB>',
+          \ ':<C-u>call jumparound#GoToTabPage(' . s:i . ')<CR>',
+          \ '<Plug>JumparoundGoToTabPage' . s:i)
     let s:i = s:i + 1
   endwhile
 
-  " 0<Tab> is a special case, which jumps to the previous tab page
-  nnoremap <silent> 0<Tab> :<C-u>call jumparound#GoToTabPage('0')<CR>
+  " 0<Tab> is for jumping to the previously accessed tab page
+  call <SID>MapForSingleMode('n', '0<TAB>',
+        \ ':<C-u>call jumparound#GoToTabPage("0")<CR>',
+        \ '<Plug>JumparoundGoToTabPage0')
 endif
 " }}}2
 
@@ -109,22 +183,32 @@ if ! exists('g:ja_add_nr_cr_mappings') || g:ja_add_nr_cr_mappings
   while s:i <= s:max
     " nnoremap N<CR> <C-w>w
     " where N is 1 ~ 9
-    exe 'nnoremap <silent> ' . s:i . '<CR> ' . s:i . '<C-w>w'
+    call <SID>MapForSingleMode('n', s:i . '<CR>',
+          \ s:i . '<C-w>w',
+          \ '<Plug>JumparoundGoToWindow' . s:i)
     let s:i = s:i + 1
   endwhile
 
-  " 0<CR> is a special case, which jumps to the previous window
-  nnoremap <silent> 0<CR> <C-w>p
+  " 0<CR> is for jumping to the previously accessed window
+  call <SID>MapForSingleMode('n', '0<CR>',
+        \ '<C-w>p',
+        \ '<Plug>JumparoundGoToWindow0')
 endif
 " }}}2
 
 " Jump across marks {{{2
 if ! exists('g:ja_add_space_marks') || g:ja_add_space_marks
-  nnoremap <silent><SPACE><CR> :<C-u>call jumparound#SetMark()<CR>
+  call <SID>MapForSingleMode('n', '<SPACE><CR>',
+        \ ':<C-u>call jumparound#SetMark()<CR>',
+        \ '<Plug>JumparoundSetMark')
 
-  nnoremap <silent><SPACE> :<C-u>call jumparound#JumpToMark()<CR>
+  call <SID>MapForSingleMode('n', '<SPACE>',
+        \ ':<C-u>call jumparound#JumpToMark()<CR>',
+        \ '<Plug>JumparoundJumpToMark')
 
-  nnoremap <silent>0<SPACE> ``
+  call <SID>MapForSingleMode('n', '0<SPACE>',
+        \ '``',
+        \ '<Plug>JumparoundJumpToLastPosition')
 endif
 " }}}2
 
@@ -135,16 +219,10 @@ endif
 " ============================================================================
 
 if ! exists('g:ja_search_mapleader')
-  " If mappings for quick search are conflicting,
-  " define this global variable with non empty key;
-  "     e.g., let g:ja_search_mapleader = '<C-g>'
-  "     e.g., Then, you can type <C-g>sa for the 'sa' mapping
-  " (See below for 'sa' mapping)
   let g:ja_search_mapleader = ''
 endif
 
-" You can use * or # for visually selected text {{{2
-" just like you use * or # for quickly searching <cword> (:help star)
+" * or # command for arbitrary text selected in the Visual mode {{{2
 function! <SID>MapXmapStar(cmd)
   let l:tmp = @t
   try
@@ -168,72 +246,74 @@ endif
 " Normal mode mappings for quick text search {{{2
 
 " Search the argument list for the pattern stored in @/ register
-exe 'nnoremap <silent>' . g:ja_search_mapleader . 'sa'
-      \ ' :<C-u>noautocmd vimgrep! /\V<C-r>//j ##'
-      \ ' \| call jumparound#OpenQuickfix()<CR>'
+call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'sa',
+      \ ':<C-u>noautocmd vimgrep! /\V<C-r>//j ##' .
+      \ ' \| call jumparound#OpenQuickfix()<CR>',
+      \ '<Plug>JumparoundSearchArgList')
 
 " Search files for the pattern stored in @/ register.
-" It's possibly very slow depending on the number of files to visit.
-" Use it with the 'wildignore' option to avoid such situation;
-"     e.g., :set wildignore+=build/**
-exe 'nnoremap <silent>' . g:ja_search_mapleader . 'sf'
-      \ ' :<C-u>noautocmd vimgrep! /\V<C-r>//j **'
-      \ ' \| call jumparound#OpenQuickfix()<CR>'
+call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'sf',
+      \ ':<C-u>noautocmd vimgrep! /\V<C-r>//j **' .
+      \ ' \| call jumparound#OpenQuickfix()<CR>',
+      \ '<Plug>JumparoundSearchFiles')
 
-" Same as 'sa' or 'sf' mappings except the search result will use 'location list'
-" instead of 'quickfix list' (:help location-list) 
-" Note that you CAN'T use 'qft' mapping to toggle the location list window.
-" Use ':lopen' or ':lclose' command
-exe 'nnoremap <silent>' . g:ja_search_mapleader . 'Sa'
-      \ ' :<C-u>noautocmd lvimgrep! /\V<C-r>//j ##'
-      \ ' \| call jumparound#OpenLocationList()<CR>'
-exe 'nnoremap <silent>' . g:ja_search_mapleader . 'Sf' 
-      \ ' :<C-u>noautocmd lvimgrep! /\V<C-r>//j **'
-      \ ' \| call jumparound#OpenLocationList()<CR>'
+" Same as 'sa' or 'sf' mappings except the search result will use
+" 'location list' instead of 'quickfix list' (:help location-list) 
+call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'Sa',
+      \ ':<C-u>noautocmd lvimgrep! /\V<C-r>//j ##' .
+      \ ' \| call jumparound#OpenLocationList()<CR>',
+      \ '<Plug>JumparoundSearchArgListLoc')
 
-" Search the argument list for the word under the cursor
-exe 'nnoremap <silent>' . g:ja_search_mapleader . '#a'
-      \ '*:<C-u>noautocmd vimgrep! /\V<C-r>//j ##'
-      \ ' \| call jumparound#OpenQuickfix()<CR>'
+call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'Sf',
+      \ ':<C-u>noautocmd lvimgrep! /\V<C-r>//j **' .
+      \ ' \| call jumparound#OpenLocationList()<CR>',
+      \ '<Plug>JumparoundSearchFilesLoc')
 
-" Search files for the word under the cursor
-exe 'nnoremap <silent>' . g:ja_search_mapleader . '#f'
-      \ '*:<C-u>noautocmd vimgrep! /\V<C-r>//j **'
-      \ ' \| call jumparound#OpenQuickfix()<CR>'
+" Search the argument list for <cword>
+call <SID>MapForSingleMode('n', g:ja_search_mapleader . '#a',
+      \ '*:<C-u>noautocmd vimgrep! /\V<C-r>//j ##' .
+      \ ' \| call jumparound#OpenQuickfix()<CR>',
+      \ '<Plug>JumparoundQuickSearchArgList')
 
-" Search the argument list for the text visually selected
-exe 'xnoremap <silent>' . g:ja_search_mapleader . '#a'
-      \ ' :<C-u>call <SID>MapXmapStar("/")<CR>/<C-r>=@/<CR><CR>'
-      \ ' : noautocmd vimgrep! /\V<C-r>//j ##'
-      \ ' \| call jumparound#OpenQuickfix()<CR>'
+" Search files for <cword>
+call <SID>MapForSingleMode('n', g:ja_search_mapleader . '#f',
+      \ '*:<C-u>noautocmd vimgrep! /\V<C-r>//j **' .
+      \ ' \| call jumparound#OpenQuickfix()<CR>',
+      \ '<Plug>JumparoundQuickSearchFiles')
 
-" Search files for the text visually selected
-exe 'xnoremap <silent>' . g:ja_search_mapleader . '#f'
-      \ ' :<C-u>call <SID>MapXmapStar("/")<CR>/<C-r>=@/<CR><CR>'
-      \ ' : noautocmd vimgrep! /\V<C-r>//j **'
-      \ ' \| call jumparound#OpenQuickfix()<CR>'
+" Search the argument list for the text selected in the Visual mode
+call <SID>MapForSingleMode('x', g:ja_search_mapleader . '#a',
+      \ ' :<C-u>call <SID>MapXmapStar("/")<CR>/<C-r>=@/<CR><CR>' .
+      \ ' : noautocmd vimgrep! /\V<C-r>//j ##' .
+      \ ' \| call jumparound#OpenQuickfix()<CR>',
+      \ '<Plug>JumparoundQuickSearchArgList')
+
+" Search files for the text selected in the Visual mode
+call <SID>MapForSingleMode('x', g:ja_search_mapleader . '#f',
+      \ ' :<C-u>call <SID>MapXmapStar("/")<CR>/<C-r>=@/<CR><CR>' .
+      \ ' : noautocmd vimgrep! /\V<C-r>//j **' .
+      \ ' \| call jumparound#OpenQuickfix()<CR>',
+      \ '<Plug>JumparoundQuickSearchFiles')
 
 " }}}2
 
-" These command line mappings exist for more flexibility.
-" They will print out the candidate command in the command line and
-" wait for your editing and pressing <CR>
-" The cursor will be placed where you can type file paths right away
+" Command mode abbreviations for more flexibility {{{2
 if ! exists('g:ja_add_search_cabbrs') || g:ja_add_search_cabbrs
-  cnoreabbrev vg+ <C-u>noautocmd vimgrep /\V<C-r>//j
-        \ \| call jumparound#OpenQuickfix()<S-Left><S-Left><S-Left><Left>
-  cnoreabbrev vg# <C-u>noautocmd vimgrep /\V<C-r>//j ##
-        \ \| call jumparound#OpenQuickfix()<S-Left><S-Left><S-Left><Left>
-  cnoreabbrev vg* <C-u>noautocmd vimgrep /\V<C-r>//j **
-        \ \| call jumparound#OpenQuickfix()<S-Left><S-Left><S-Left><Left>
-endif
+  call <SID>AbbrForSingleMode('c', 'vg+',
+        \ '<C-u>noautocmd vimgrep /\V<C-r>//j' .
+        \ ' \| call jumparound#OpenQuickfix()<S-Left><S-Left><S-Left><Left>')
 
-" Some of mappings above will search through files in the argument list
-" using ## notation with vimgrep command ( :help :_## )
-" If you want to add buffers in the argument list, use 'argadd' command.
-" Or in order to replace the argument list with all buffers currently loaded,
-" use the following command.
-" [LIMITATION] It will consider only buffers for readable files
+  call <SID>AbbrForSingleMode('c', 'vg#',
+        \ '<C-u>noautocmd vimgrep /\V<C-r>//j ##' .
+        \ ' \| call jumparound#OpenQuickfix()<S-Left><S-Left><S-Left><Left>')
+
+  call <SID>AbbrForSingleMode('c', 'vg*',
+        \ '<C-u>noautocmd vimgrep /\V<C-r>//j **' .
+        \ ' \| call jumparound#OpenQuickfix()<S-Left><S-Left><S-Left><Left>')
+endif
+" }}}2
+
+" Replace the argument list with all buffers currently loaded
 command! JaUpdateArgsFromBufs call jumparound#UpdateArgsFromBufs()
 
 " }}}1
@@ -242,15 +322,15 @@ command! JaUpdateArgsFromBufs call jumparound#UpdateArgsFromBufs()
 " QUICKFIX WINDOW {{{1
 " ============================================================================
 
-" Toggle quickfix window ==> q(uick) f(ix) t(oggle)
-nnoremap <silent>qft :<C-u>call jumparound#ToggleQuickfix()<CR>
+" Toggle the Quickfix window
+call <SID>MapForSingleMode('n', 'qft',
+      \ ':<C-u>call jumparound#ToggleQuickfix()<CR>',
+      \ '<Plug>JumparoundToggleQuickfix')
 
-if ! empty('g:mapleader') && maparg('<leader>q') == ''
-  nnoremap <silent><leader>q :<C-u>call jumparound#ToggleQuickfix()<CR>
-endif
-
-" Focus to quickfix (or location list)
-nnoremap <silent>q<CR> :<C-u>call jumparound#GoToQuickfixWin()<CR>
+" Jump to the Quickfix window
+call <SID>MapForSingleMode('n', 'q<CR>',
+      \ ':<C-u>call jumparound#GoToQuickfixWin()<CR>',
+      \ '<Plug>JumparoundGoToQuickfixWin')
 
 " }}}1
 
