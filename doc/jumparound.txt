@@ -1,26 +1,30 @@
 *jumparound.txt*         Plugin for quickly jumping around your content
 
-===============================================================================
+==============================================================================
 Author:       Suewon Bahng <https://github.com/suewonjp/>
 Version:      1.0
 License: Same terms as Vim itself (see |license|)
+==============================================================================
 
 This plugin is only available if 'compatible' is not set and
 Vim version is 7.0 or later
 
-===============================================================================
-INTRODUCTION                         *ja* *JA* *jumparound*
+==============================================================================
+INTRODUCTION                                   *ja* *JA* *jumparound*
+==============================================================================
 
 This plugin provides mappings and commands for:
+- Quick Jump between Tab Pages/Windows/Marks           |ja-jumping|
+- Quick Text Search                                    |ja-quick-search| 
+- Easy Use of Quickfix List                            |ja-quickfix| 
 
-- Quick Jump between Tab pages/Windows/Marks     *ja-jumping*
-- Quick Text Search                              *ja-quick-search* 
-- Easy Use of Quickfix List                      *ja-quickfix* 
+For configuration, see |ja-configuration|
 
-===============================================================================
-FEATURES                                                 *ja-features*
+==============================================================================
+FEATURES                                                *ja-features*
+==============================================================================
 
-QUICK JUMP IN BETWEEN BUFFERS                               *ja-jumping*
+QUICK JUMP IN BETWEEN BUFFERS                            *ja-jumping*
 -----------------------------
 
 When you edit multiple files, efficiently jumping back and forth in between
@@ -29,15 +33,15 @@ will greatly help you quickly navigate across or within buffers.
 
 Jumping to Tab Pages: ~
 
-*<M-l>*  *<M-h>* *ja-jump-to-tab-pages*
+                               *<M-l>* *<M-h>* *ja-jump-to-tab-pages*
 <M-l> (press ALT + L) is equivalent to |gt| command. It will let you go to the
 next tab page.
 <M-h> (press ALT + H) is equivalent to |gT| command. It will let you go to the
 previous tab page.
-Note that these mappings would work for not only Normal mode, but also
+Note that these mappings would work in not only Normal mode, but also
 Insert mode, Visual mode, Command mode.
 
-*{num}<TAB>*
+                            {num}<TAB> *0<TAB>*  *1<TAB>*  *2<TAB>*
 {num} is 0..9 (0 and 9 included).
 You can jump to a certain tab page by directly specifying its number. The
 number 1 is assigned to the left most tab page and the number 2 is assigned to
@@ -46,82 +50,371 @@ the next one, and so on.
 0<TAB> is for a special movement, which jumps to the previously accessed tab
 page.
 
-You can disable this mapping by adding the following code in your .vimrc >
-
-    let g:ja_add_nr_tab_mappings = 0
-<
+                                    *<M-t>*
+It will open a file explorer (|netrw-contents|) in a new tab page.
+The current working directory for the file explorer will be {%:p:h} which
+means the parent directory of the file from which this mapping was
+invoked.
+(See |filename-modifiers|) 
 
 Jumping to Windows: ~
 
-*<M-K>* *<M-J>* *<M-H>* *<M-L>* *ja-jump-to-windows*
+                 *<M-K>* *<M-J>* *<M-H>* *<M-L>* *ja-jump-to-windows*
 These mappings will let your cursor move to other windows. Note that, for
 instance, <M-K> means you should press ALT + SHIFT + K simultaneously. And
 <M-K> will let your cursor move to another window above the current one.
 Likewise, <M-L> will let your cursor move to another window right of the
-current one. 
+current one. One advantage over default window movement mappings
+(|window-move-cursor|) is that cursor movement won't get stuck at the end of
+each direction.
+E.g., pressing <M-L> at the right most window will let you access the left
+most window unlike |CTRL-W_CTRL-L|.
 Note that these mappings would work for not only Normal mode, but also
 Insert mode, Visual mode, Command mode.
 
-*{num}<CR>*
+                                  {num}<CR> *0<CR>* *1<CR>* *2<CR>*
 {num} is 0..9 (0 and 9 included).
 You can jump to a certain window by directly specifying its number. The number
-1 is assigned to the top left window, the last number is assigned to the
-bottom right window.
+1 is assigned to the top left window, the last number (== the number of
+windows in the current tab page) is assigned to the bottom right window.
 
 0<CR> is for a special movement, which jumps to the previously accessed window.
 It is equivalent to |CTRL-W_P|.
 
-You can disable this mapping by adding the following code in your .vimrc >
-
-    let g:ja_add_nr_cr_mappings = 0
-<
+                                    *<M-x>*
+It will open a file explorer in a new vertical split window.
+The current working directory for the file explorer will be {%:p:h} which
+means the parent directory of the file from which this mapping was
+invoked.
+(See |filename-modifiers|)
+You can use the same mapping to close the window.
 
 Jumping to Marks: ~
 
-You can disable these mappings by adding the following code in your .vimrc >
-
-    let g:ja_add_space_marks = 0
-<
-
-*<SPACE>{0-9a-zA-Z}*
-It lets you jump to the mark. It is equivalent to |`{a-zA-Z}| and |`{0-9}|.
+                     *<SPACE>{mark}*  *ja-jump-to-marks*
+It lets you jump to a mark. It is equivalent to |`| or |'|.
 
 This mapping has some advantages over the default mappings. Depending on the
-keyboard layout, the position of ' or ` key is different, and this may become a
-small issue, when you need to deal with multiple machines. (e.g., your personal laptop,
-your office laptop, your personal desktop, your office desktop, ...) This
-mapping will let you jump to marks with a consistent key input so you don't
-need to care about specific keyboard layouts.
+keyboard layout, the location of |'| or |`| key is inconsistent, and this may
+become a small issue, when you need to deal with multiple machines.
+(E.g., your personal laptop, your office laptop, your personal desktop, your
+office desktop, and so on)
+This mapping will let you jump to marks with a consistent key input so you
+don't need to care about specific keyboard layouts.
 And it's much easier to type.
 
-*0<SPACE>*
-This is equivalent to |``|. It basically lets you jump to the position before
+Note that you can tune behaviors of this mapping with |g:ja_mark_prefix| and
+|g:ja_mark_suffix| variables.
+
+                                                  *0<SPACE>*
+This is equivalent to |``|. It lets you jump to the position before
 the last jump. 
 
-*<SPACE><CR>*
+                                                  *<SPACE><CR>{mark}*
 This is a mapping for setting marks. It's equivalent to |m|. Mostly, using the
 original command would be more convenient but it has one advantage when you
-use Vim's builtin file explorer Netrw |netrw-contents|.
+use Vim's builtin file explorer Netrw (|netrw-contents|).
 Netrw defined a bunch of mappings starting with |m| and you can't use certain
-mark names in a Netrw window. (e.g., Typing mm won't let you set mark m in Netrw
-window. It will invoke |netrw-mm| instead)
+mark names in a Netrw window. (E.g., Typing 'mm' won't let you set mark 'm' in
+a Netrw window. It will invoke |netrw-mm| command instead)
 However, this mapping will let you overcome that limitation.
 
-QUICK TEXT SEARCH                                       *ja-quick-search*
+Extra Mappings: ~
+
+                                                              *<M-y>*
+It will let your mode switch to the Normal mode, which means it's equivalent
+to <ESC>.
+Pressing <ESC> requires your finger to move quite a distance for the most of
+keyboard layouts so this mapping may be quicker than pressing <ESC>.
+One unique feature is when you use it on Insert mode Keyword Completion 
+(|ins-completion|), Vim would select the current match in the popup menu and
+switch to the Normal mode all at once.
+It's quicker than pressing <CR> and <ESC>.
+
+                                                              *<M-s>*
+It will save the current buffer and let your mode switch to the Normal mode.
+You can use it in the Normal mode, Insert mode, Command mode, Visual mode.
+It's obviously quicker than typing |:w| and pressing <ESC>.
+An additional small advantage is it won't polute the command line history
+unlike |:w|.
+
+QUICK TEXT SEARCH                                   *ja-quick-search*
 -----------------
 
 Text search is also important in terms of navigation. This plugin provides
-many mappings to enhance your text search activites.
+many mappings to enhance your text search productivity.
 
-EASY USE OF QUICKFIX LIST                               *ja-quickfix*
--------------------------
+                                                       *ja-xmap-star*
+As you know, Vim provides quite a convenient functionality that instantly
+searches the current buffer for a word on the cursor (<cword>).
+You can trigger that by pressing *(|star|) or |#|.
+This plugin provides that functionality for arbitrary text which can be
+selected in the Visual mode.
+Pressing * or # will kick the search on the current buffer for the selected
+text.
 
-This plugin also provides many mappings to enhance Quickfix list
+The feature will be enabled by default. If you want to DISABLE the feature,
+then add the following code in your .vimrc. >
+
+    let g:ja_add_xmap_star = 0
+>
+~
+                                                                 *sa*
+It will search the |argument-list| for the pattern stored in |@/| register.
+Mostly, what you do before executing this mapping would be searching the
+current buffer for the pattern, which you can quickly execute with *(|star| )
+or |#| command. ( or manual search using |/| or |?|)
+After search complete, this mapping will automatically open the |quickfix|
+window containing the search result.
+See |ja-quickfix| to refer to mappings provided by the plugin for manipulating
+|quickfix| window.
+
+Also see |g:ja_search_mapleader| for how to make these search related mappings
+not conflicting with your existing mappings.
+                                                                              
+                                                                 *sf*
+Same as  |sa| except that it will recursively search files in the current
+working directory.
+It may be possibly very slow depending on the number of files to visit.
+Use it with the |wildignore| option to suppress file access at a minimum.
+Example: >
+    :set wildignore=*.o,*.obj,build/**
+>
+~
+                                                                 *Sa*
+Same as |sa| except the search result will use |location-list| instead of
+ |quickfix| list.
+Note that you CAN'T use |qft| mapping to toggle the |location-list| window.
+Use|:lopen| or|:lclose|command instead.
+
+                                                                 *Sf*
+Same as |sf| except the search result will use |location-list| instead of
+ |quickfix| list.
+Note that you CAN'T use |qft| mapping to toggle the |location-list| window.
+Use |:lopen| or |:lclose| command instead.
+
+                                                                 *#a*
+It will search the |argument-list| for the word under the cursor(<cword>) or
+arbitrary text selected in the Visual mode.
+
+                                                                 *#f*
+Same as |#a| that it will recursively search files in the current working
+directory. Also, see |sf| for a possible performance issue.
+
+                                                               *:vg#*
+It is a Command mode abbreviation. It will expand out a command template
+which you can edit and customize for your need. After editing complete,
+press <CR> to execute the command.
+You may need to be a little familiar with |vimgrep| command to put this
+abbreviation to good use.
+
+                                                      :vg*  *:vgstar*
+Same as |:vg#| abbreviation except that it will use ** instead of ## (|_##|)
+for its target object notation.
+That means it will search files in the current working directory recursively
+if you leave the notation as it is. (Same behavior as |sf|  or |Sf|  or |#f|)
+
+                                                               *:vg+*
+Same as |:vg#| or |:vgstar| except that it won't print the target notation such
+as ** or ## (|_##|). You should specify the target files or paths to search
+with |vimgrep| command on your own.
+
+                                              *:JaUpdateArgsFromBufs*
+Some of mappings for search in this plugin will search files in the
+|argument-list| using ## notation (|_##|) with  |vimgrep| command. Maintaining the
+|argument-list| is up to the user.
+( E.g., you can add one or more buffers to the list using |argadd| command. )
+Use this command in order to replace the argument list with all the buffers
+currently loaded.
+Note that it will add buffers for readable files only.
+
+EASIER USE OF QUICKFIX LIST                             *ja-quickfix*
+---------------------------
+
+This plugin also provides many mappings to enhance |quickfix| list
 manipulations.
 
-===============================================================================
-CONFIGURATION                                           *ja-configuration* 
+                                                            *qft*
+It will toggle the |quickfix| window. When closing the |quickfix| 
+window, the cursor need not be in the |quickfix| window.
+'qft' stands for Quick Fix Toggle.
 
-===============================================================================
-ISSUES                                                  *ja-issues* 
+                                                          *q<CR>*
+It will move the cursor to the |quickfix| window while it is open.
+
+                                        *ja-quickfix-window-mappings*
+The following mappings are available for the |quickfix| and
+|location-list| windows.
+
+x       Open file and close the |quickfix| window.
+
+s       Open file maintaining focus on the window.
+
+t       Open in a new tab.
+
+T       Open in a new tab maintaining focus on the window.
+
+_       Open in a new horizontal split window.
+
+__      Open in a new horizontal split window maintaining focus on the window.
+
+|       Open in a new vertical split window.
+
+||      Open in a new vertical split window maintaining focus on the window.
+
+==============================================================================
+CONFIGURATION                                      *ja-configuration* 
+==============================================================================
+
+GLOBAL VARIABLES                                *ja-global-variables*
+----------------
+
+                                     *g:ja_check_mapping_confliction*
+Use this variable to check if mappings in the plugin conflict with your
+existing mappings. The variable is not defined by default, so define it like
+so to enable the checking: >
+
+	let g:ja_check_mapping_confliction = 1
+<
+                                        *g:ja_bind_alt_meta_mappings*
+This plugin uses a bunch of ALT key mappings. (such as |<M-h>| or |<M-l>|, etc)
+When you already defined many ALT key mappings and they conflict with
+the mappings of this plugin and you prefer your own mappings, then DISABLE the
+ALT key mappings of the plugin like so: >
+
+	let g:ja_bind_alt_meta_mappings = 0
+<
+Of course, you can't use {<M-...>} mappings any more after disabling ALT key
+mappings. But you can still navigate tab pages or windows using {num}<TAB>
+(|1<TAB>|) or {num}<CR>(|1<CR>|) mappings.
+Also, you can define your own mappings for the disabled navigation commands
+in your .vimrc.  ( See |ja-mapping-override| for how-to )
+
+                                           *g:ja_add_nr_tab_mappings*
+You can DISABLE {num}<TAB>(|1<TAB>|) mappings by adding the following code in your
+.vimrc >
+
+    let g:ja_add_nr_tab_mappings = 0
+<
+                                                                              
+                                            *g:ja_add_nr_cr_mappings*
+You can DISABLE {num}<CR>(|1<CR>|) mappings by adding the following code in your
+.vimrc >
+
+    let g:ja_add_nr_cr_mappings = 0
+<
+                                               *g:ja_add_space_marks*
+You can DISABLE |<SPACE>{mark}| mappings or other mappings regarding
+marks ( See |ja-jump-to-marks|) by adding the following code in your .vimrc >
+
+    let g:ja_add_space_marks = 0
+<
+                                              *g:ja_search_mapleader*
+If mappings for |ja-quick-search| are conflicting, define this global variable
+with non empty key. ( The default value is an empty string )
+Example: >
+
+	let g:ja_search_mapleader = '<C-g>'
+<
+	Then, you can prefix <C-g> for every quick search mappings in the plugin.
+    ( <C-g>sa for |sa| , <C-g>#f for |#f|, and so on)
+
+Note that this is not |mapleader| , and it only applies to the |ja-quick-search|
+mappings.
+
+                                                 *g:ja_add_xmap_star*
+See |ja-xmap-star| for the usage of this global variable.
+
+                                             *g:ja_add_search_cabbrs*
+If you want to DISABLE |:vg+|, |:vgstar|, |:vg#| command line abbreviations,
+add the following code in your .vimrc >
+
+	let g:ja_add_search_cabbrs = 0
+
+~
+                                                 *g:ja_mark_prefix*
+|<SPACE>{mark}| mappings use |`| by default. Add the following code in your
+.vimrc if you like to use |'| instead. >
+
+	let g:ja_mark_prefix = "'"
+<
+Obviously, the value should be either of |`| or |'| .
+
+                                                *g:ja_mark_suffix*
+Every |<SPACE>{mark}| mapping will execute additional command represented by
+this variable. Its default value is |zz|, which means every |<SPACE>{mark}|
+will be followed by screen redraw placing the cursor at the center of
+the window. If you add the following code in your .vimrc, then every
+|<SPACE>{mark}| will place the cursor at the top of the window. >
+
+	let g:ja_mark_suffix = 'zt'
+<
+
+
+OVERRIDING MAPPINGS       *ja-mapping-override* *ja-mapping-overrule*
+-------------------
+
+Most of mapping commands can be overridden by accessing the internal mappings
+directly.
+Example: >
+
+	nmap <C-g>h <Plug>JumparoundGoToPrevTabPage
+<
+	Now you can use <C-g>h instead of |<M-h>| provided by the plugin.
+
+    Note : Mappings provided by the plugin like |<M-h>| consistently work
+    in the Insert Mode, Command mode, Visual mode as well as Normal mode.
+    Overriding the mappings with yours means you lose that kind of
+    additional conveniences.
+
+*<Plug>JumparoundGoToNextTabPage*
+The internal mapping for |<M-l>|
+
+*<Plug>JumparoundGoToPrevTabPage*
+The internal mapping for |<M-h>|
+
+*<Plug>JumparoundGoToUpperWindow*
+The internal mapping for |<M-K>|
+
+*<Plug>JumparoundGoToLowerWindow*
+The internal mapping for |<M-J>|
+
+*<Plug>JumparoundGoToLeftWindow*
+The internal mapping for |<M-H>|
+
+*<Plug>JumparoundGoToRightWindow*
+The internal mapping for |<M-L>|
+
+*<Plug>JumparoundOpenTex*
+The internal mapping for |<M-t>|
+
+*<Plug>JumparoundToggleLex*
+The internal mapping for |<M-x>|
+
+*<Plug>JumparoundGoToTabPage{num}*
+The internal mapping for {num}<TAB> (|1<TAB>|)
+
+*<Plug>JumparoundGoToWindow{num}*
+The internal mapping for {num}<CR> (|1<CR>|)
+
+*<Plug>JumparoundSetMark*
+The internal mapping for |<SPACE><CR>{mark}|
+
+*<Plug>JumparoundJumpToMark*
+The internal mapping for |<SPACE>{mark}|
+
+*<Plug>JumparoundJumpToLastPosition*
+The internal mapping for |0<SPACE>|
+
+*<Plug>JumparoundGoBackToNmlMode*
+The internal mapping for |<M-y>|
+
+*<Plug>JumparoundSaveBufAndGoToNmlMode*
+The internal mapping for |<M-s>|
+
+*<Plug>JumparoundToggleQuickfix*
+The internal mapping for |qft| 
+
+*<Plug>JumparoundGoToQuickfixWin*
+The internal mapping for |q<CR>|
 

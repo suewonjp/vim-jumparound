@@ -4,7 +4,6 @@
 .orig
 .log
 .trashcan
-tags
 Session.vim
 .vimrc
 .memo
