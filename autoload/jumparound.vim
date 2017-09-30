@@ -137,8 +137,8 @@ endfunction
 " ============================================================================
 
 function! jumparound#IsSearchableBuf(bufinfo)
-  return a:bufinfo.listed && (filereadable(a:bufinfo.name)
-    || isdirectory(a:bufinfo.name))
+  return a:bufinfo.listed && (filereadable(a:bufinfo.name))
+    || isdirectory(a:bufinfo.name)
 endfunction
 
 function! jumparound#GetSearchableBufList()
