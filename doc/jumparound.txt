@@ -7,7 +7,7 @@ License: Same terms as Vim itself (see |license|)
 ==============================================================================
 
 This plugin is only available if 'compatible' is not set and
-Vim version is 7.0 or later
+Vim version is 8.0 or later
 
 ==============================================================================
 INTRODUCTION                                   *ja* *JA* *jumparound*

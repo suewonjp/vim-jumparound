@@ -12,7 +12,7 @@ This plugin provides mappings and commands for:
 ### :coffee: QUICK USAGE OVERVIEW
 
 > **[NOTE]** This plugin is only available if 'compatible' is not set and  
-> Vim version is 7.0 or later
+> Vim version is 8.0 or later
 
 #### :small_orange_diamond: Quick Jump between Tab Pages ( :help ja-jump-to-tab-page )
 

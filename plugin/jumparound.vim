@@ -4,7 +4,7 @@
 " Version:      1.0
 " ============================================================================
 
-if exists('g:loaded_jumparound') || &cp || v:version < 700
+if exists('g:loaded_jumparound') || &cp || v:version < 800
   finish
 endif
 let g:loaded_jumparound = 1
