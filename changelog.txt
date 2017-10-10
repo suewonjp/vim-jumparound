@@ -1,0 +1,7 @@
+Copyright (c) 2014-2017 Suewon Bahng, suewonjp@gmail.com
+
+Last Updated (2017-10-10)
+
+## Version 1.0.0 (2017-10-10)
+- First Release.
+
