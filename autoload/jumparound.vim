@@ -83,15 +83,25 @@ function! jumparound#ToggleLex()
     let t:ja_lex_winid = 0
   endif
 
+  let l:nerdtree = exists('g:loaded_nerd_tree') && g:loaded_nerd_tree
+
   let l:lex_info = getwininfo(t:ja_lex_winid)
   let t:ja_lex_winid = 0
   if l:lex_info == []
     " We don't have Lex. Show it
-    Lex %:p:h
+    if l:nerdtree
+      NERDTree %:p:h
+    else
+      Lex %:p:h
+    endif
     let t:ja_lex_winid = jumparound#GetWindowInfo(1).winid
   else
     " We have Lex. Hide it
-    exe l:lex_info[0].winnr . 'wincmd c'
+    if l:nerdtree
+      NERDTreeClose
+    else
+      exe l:lex_info[0].winnr . 'wincmd c'
+    endif
   endif
 endfunction
 

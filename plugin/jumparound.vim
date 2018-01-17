@@ -131,7 +131,7 @@ call <SID>MapForEveryMajorMode(
 
 " Open a file explorer in a new tab
 call <SID>MapForEveryMajorMode(
-      \ '<M-t>', ' :<C-u>Tex %:p:h<CR>',
+      \ '<M-t>', ' :<C-u>tabe %:p:h<CR>',
       \ ' <Plug>JumparoundOpenTex')
 
 " Open a file explorer in a horizontal split window.
