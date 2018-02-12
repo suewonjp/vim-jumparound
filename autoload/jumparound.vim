@@ -173,9 +173,8 @@ endfunction
 " ============================================================================
 
 function! jumparound#GetQuickfixWinNr()
-  let l:wc = winnr('$')
-  let l:wn = wc
-  while wn > 0
+  let l:wn = winnr('$')
+  while l:wn > 0
     let l:wi = jumparound#GetWindowInfo(l:wn)
     if l:wi.quickfix
       return l:wi.winnr
@@ -192,20 +191,42 @@ function! jumparound#GoToQuickfixWin()
   endif
 endfunction
 
+function! jumparound#OpenTabFromQuickfix()
+  let l:height = winheight(0)
+  exe "norm! \<C-w>\<CR>\<C-w>TgT"
+  call jumparound#GoToQuickfixWin()
+  exe 'resize' l:height
+endfunction
+
+function! jumparound#OpenHorWinFromQuickfix()
+  let l:height = winheight(0)
+  exe "norm! \<C-w>\<CR>\<C-w>K"
+  call jumparound#GoToQuickfixWin()
+  exe 'resize' l:height
+endfunction
+
+function! jumparound#OpenVerWinFromQuickfix()
+  exe "norm! \<C-w>\<CR>\<C-w>H"
+  cclose
+  call jumparound#OpenQuickfix()
+endfunction
+
 function! jumparound#AddMappingsForQuickfix()
-  nnoremap <buffer><silent> t <C-w><CR><C-w>T
+  nnoremap <buffer><silent> t
+        \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>gt
   nnoremap <buffer><silent> T
-        \ <C-w><CR><C-w>TgT:<C-u>call jumparound#GoToQuickfixWin()<CR>
+        \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>
   nnoremap <buffer><silent> x <CR>:cclose<CR>
   nnoremap <buffer><silent> s
         \ <CR>:<C-u>call jumparound#GoToQuickfixWin()<CR>
-  nnoremap <buffer><silent> _ <C-w><CR><C-w>K
+  nnoremap <buffer><silent> _
+        \ :<C-u>call jumparound#OpenHorWinFromQuickfix()<CR><C-w>p
   nnoremap <buffer><silent> __
-        \ <C-w><CR><C-w>K:<C-u>call jumparound#GoToQuickfixWin()<CR>
+        \ :<C-u>call jumparound#OpenHorWinFromQuickfix()<CR>
   nnoremap <buffer><silent> \|
-        \ <C-w><CR><C-w>H<C-w>b<C-w>J<C-w>t
+        \ :<C-u>call jumparound#OpenVerWinFromQuickfix()<CR><C-w>t
   nnoremap <buffer><silent> \|\|
-        \ <C-w><CR><C-w>H:<C-u>call jumparound#GoToQuickfixWin()<CR>
+        \ :<C-u>call jumparound#OpenVerWinFromQuickfix()<CR>
 endfunction
 
 function! jumparound#OpenQuickfix()
