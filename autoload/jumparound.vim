@@ -1,7 +1,7 @@
 " ============================================================================
 " Vim-JumpAround
 " Author:       Suewon Bahng <https://github.com/suewonjp/>
-" Version:      1.0
+" Version:      1.1.0
 " ============================================================================
 
 " ============================================================================
@@ -31,20 +31,32 @@ function! jumparound#RememberCurTabPage()
 endfunction
 
 function! jumparound#GoToTabPage(tgt)
+  let l:tc = tabpagenr('$')
+  let l:count = v:count1
   if a:tgt == '++'
     " Next tab
     call jumparound#RememberCurTabPage()
-    norm! gt
+    let l:next_tabpage_nr = s:prev_tabpage_nr + l:count
+    if l:next_tabpage_nr > l:tc
+      let l:next_tabpage_nr = l:next_tabpage_nr - l:tc
+    endif
+    exe l:next_tabpage_nr . 'tabn'
   elseif a:tgt == '--'
     " Previous tab
     call jumparound#RememberCurTabPage()
-    norm! gT
+    let l:next_tabpage_nr = s:prev_tabpage_nr - l:count
+    if l:next_tabpage_nr <= 0
+      let l:next_tabpage_nr = l:tc + l:next_tabpage_nr
+    endif
+    exe l:next_tabpage_nr . 'tabn'
   else
     let l:tnr = str2nr(a:tgt)
-    let l:tc = tabpagenr('$')
     if l:tnr < 1
       " When 0<Tab> typed
       let l:tnr = s:prev_tabpage_nr
+    elseif l:tnr == 9
+      " When 9<Tab> typed
+      let l:tnr = '$'
     elseif l:tnr > l:tc
       " When N<Tab> typed where N > total tab page count
       let l:tnr = l:tc
@@ -129,7 +141,7 @@ endfunction
 function! jumparound#JumpToMark()
   let l:nr = getchar()
   let l:ch = nr2char(l:nr)
-  if l:ch =~# '[0-9a-zA-Z]'
+  if l:ch =~# "[0-9a-zA-Z.^'<>]"
     try
       exe 'norm!' g:ja_mark_prefix . l:ch . g:ja_mark_suffix
     catch /^Vim\%((\a\+)\)\=:E20/
@@ -214,6 +226,8 @@ endfunction
 function! jumparound#AddMappingsForQuickfix()
   nnoremap <buffer><silent> t
         \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>gt
+  nnoremap <buffer><silent> tt
+        \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>
   nnoremap <buffer><silent> T
         \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>
   nnoremap <buffer><silent> x <CR>:cclose<CR>
@@ -223,10 +237,14 @@ function! jumparound#AddMappingsForQuickfix()
         \ :<C-u>call jumparound#OpenHorWinFromQuickfix()<CR><C-w>p
   nnoremap <buffer><silent> __
         \ :<C-u>call jumparound#OpenHorWinFromQuickfix()<CR>
+  nnoremap <buffer><silent> _x
+        \ :<C-u>call jumparound#OpenHorWinFromQuickfix()<CR>:cclose<CR>
   nnoremap <buffer><silent> \|
         \ :<C-u>call jumparound#OpenVerWinFromQuickfix()<CR><C-w>t
   nnoremap <buffer><silent> \|\|
         \ :<C-u>call jumparound#OpenVerWinFromQuickfix()<CR>
+  nnoremap <buffer><silent> \|x
+        \ :<C-u>call jumparound#OpenVerWinFromQuickfix()<CR>:cclose<CR>
 endfunction
 
 function! jumparound#OpenQuickfix()

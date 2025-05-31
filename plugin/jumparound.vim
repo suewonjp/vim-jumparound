@@ -1,7 +1,7 @@
 " ============================================================================
 " Vim-JumpAround
 " Author:       Suewon Bahng <https://github.com/suewonjp/>
-" Version:      1.0
+" Version:      1.1.0
 " ============================================================================
 
 if exists('g:loaded_jumparound') || &cp || v:version < 800
@@ -79,17 +79,19 @@ endfunction
 " Define Alt(Meta) key mappings for tab pages/windows navigation and etc. {{{2
 
 " Bind Alt(Meta) key combinations {{{3
-if ! exists('g:ja_bind_alt_meta_mappings') || g:ja_bind_alt_meta_mappings
-  exe "set <M-l>=\el"
-  exe "set <M-h>=\eh"
-  exe "set <M-L>=\eL"
-  exe "set <M-H>=\eH"
-  exe "set <M-J>=\eJ"
-  exe "set <M-K>=\eK"
-  exe "set <M-t>=\et"
-  exe "set <M-x>=\ex"
-  exe "set <M-s>=\es"
-  exe "set <M-y>=\ey"
+if !has('nvim')
+  if ! exists('g:ja_bind_alt_meta_mappings') || g:ja_bind_alt_meta_mappings
+    exe "set <M-l>=\el"
+    exe "set <M-h>=\eh"
+    exe "set <M-L>=\eL"
+    exe "set <M-H>=\eH"
+    exe "set <M-J>=\eJ"
+    exe "set <M-K>=\eK"
+    exe "set <M-t>=\et"
+    exe "set <M-x>=\ex"
+    exe "set <M-s>=\es"
+    exe "set <M-y>=\ey"
+  endif
 endif
 " }}}3
 
@@ -158,11 +160,11 @@ call <SID>MapForEveryMajorMode('<M-s>', ' :<C-u>w<CR>',
 
 " Jump to tab page by specifying its number {{{2
 if ! exists('g:ja_add_nr_tab_mappings') || g:ja_add_nr_tab_mappings
-  let s:max = 9
+  let s:max = 8
   let s:i = 1
   while s:i <= s:max
     " nnoremap N<Tab> :call jumparound#GoToTabPage('N')<CR>
-    " where N is 1 ~ 9
+    " where N is 1 ~ 8
     call <SID>MapForSingleMode('n', s:i . '<TAB>',
           \ ':<C-u>call jumparound#GoToTabPage(' . s:i . ')<CR>',
           \ '<Plug>JumparoundGoToTabPage' . s:i)
@@ -173,16 +175,21 @@ if ! exists('g:ja_add_nr_tab_mappings') || g:ja_add_nr_tab_mappings
   call <SID>MapForSingleMode('n', '0<TAB>',
         \ ':<C-u>call jumparound#GoToTabPage("0")<CR>',
         \ '<Plug>JumparoundGoToTabPage0')
+
+  " 9<Tab> is for jumping to the last tab page
+  call <SID>MapForSingleMode('n', '9<TAB>',
+        \ ':<C-u>call jumparound#GoToTabPage("9")<CR>',
+        \ '<Plug>JumparoundGoToTabPage9')
 endif
 " }}}2
 
 " Jump to window by specifying its number {{{2
 if ! exists('g:ja_add_nr_cr_mappings') || g:ja_add_nr_cr_mappings
-  let s:max = 9
+  let s:max = 8
   let s:i = 1
   while s:i <= s:max
     " nnoremap N<CR> <C-w>w
-    " where N is 1 ~ 9
+    " where N is 1 ~ 8
     call <SID>MapForSingleMode('n', s:i . '<CR>',
           \ s:i . '<C-w>w',
           \ '<Plug>JumparoundGoToWindow' . s:i)
@@ -193,6 +200,11 @@ if ! exists('g:ja_add_nr_cr_mappings') || g:ja_add_nr_cr_mappings
   call <SID>MapForSingleMode('n', '0<CR>',
         \ '<C-w>p',
         \ '<Plug>JumparoundGoToWindow0')
+
+  " 9<CR> is for jumping to the last window
+  call <SID>MapForSingleMode('n', '9<CR>',
+        \ '100<C-w>w',
+        \ '<Plug>JumparoundGoToWindow9')
 endif
 " }}}2
 
@@ -323,7 +335,7 @@ command! JaUpdateArgsFromBufs call jumparound#UpdateArgsFromBufs()
 " ============================================================================
 
 " Toggle the Quickfix window
-call <SID>MapForSingleMode('n', 'qft',
+call <SID>MapForSingleMode('n', 'QT',
       \ ':<C-u>call jumparound#ToggleQuickfix()<CR>',
       \ '<Plug>JumparoundToggleQuickfix')
 

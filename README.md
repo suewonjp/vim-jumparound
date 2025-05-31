@@ -16,12 +16,15 @@ This plugin provides mappings and commands for:
 
 #### :small_orange_diamond: Quick Jump between Tab Pages ( :help ja-jump-to-tab-page )
 
-Type `<M-l>` (ALT + L) to jump to the right tab page (same as `gt`) and type `<M-h>` (ALT + H) jump to the left tab page (same as `gT`).
+Type `<M-l>` (ALT + L) to jump to the right (next) tab page (same as `gt`) and type `<M-h>` (ALT + H) jump to the left (previous) tab page (same as `gT`).
 
 > **[What's the advantage?]** These mappings would work in not only Normal mode, but also Insert mode, Command mode.
 
+Also, `<M-l>` and `<M-h>` accept count (only in Normal mode). E.g. Typing `3<Alt + L>` jumps to the 3rd tab page from the current tab to the right.
+
 Type `1<TAB>` to jump to the 1st tab page and `2<TAB>` to jump to the 2nd tab page and so on.  
-Typing `0<TAB>` will let you jump to the previously accessed tab page.
+Type `0<TAB>` to jump to the previously accessed tab page.  
+Type `9<TAB>` to jump to the last (the right most) tab page. (Regardless of number of tab pages open)
 
 #### :small_orange_diamond: Quick Jump between Windows ( :help ja-jump-to-windows )
 
@@ -35,17 +38,19 @@ Type `<M-J>` (ALT + SHIFT + J) to jump to the window below. (Same as `<C-w>j`)
 > However, `<M-L>` will let you go to the left most window in that case.
 
 Type `1<CR>` to jump to the 1st window which is the top left window and type `2<CR>` to jump to the 2nd window and so on.  
-Typing `0<CR>` will let you jump to the previously accessed window.
+Type `0<CR>` to jump to the previously accessed window.  
+Type `9<CR>` to jump to the last window. (Regardless of number of windows open)
 
 #### :small_orange_diamond: Quick Jump between Marks ( :help ja-jump-to-marks )
 
-Type `<SPACE>m` to jump to the mark `m` (Same as typing \`m)
+Type `<SPACE>m` to jump to the mark `m` (Same as typing \`m)  
+Type `<SPACE>.` to jump to the mark `.` (The position where the last change was made)  
 
 > **[What's the advantage?]** Depending on the keyboard layout, the location of ' or \` key is inconsistent.  
 > ( The japanese keyboard layout and US keyboard layout differ. Also laptops have different keyboard layouts. )   
 > `<SPACE>m` would let you forget the location of the keys when you use multiple machines ( And it is easier to type )
 
-`0<SPACE>` is equivalent to \`\` command, which lets you jump to the position before the last jump.
+`0<SPACE>` is equivalent to \`\` command which lets you jump to the position before the last jump.
 
 #### :small_orange_diamond: Quick Invocation of File Explorer
 Type `<M-t>` to open a file explorer in a new tab page.
@@ -63,7 +68,7 @@ Type `<M-x>` to open a file explorer in a new vertical split window. ( Type `<M-
 
 `#a` and `#f` will also work for arbitrary text selected in the Visual mode.
 
-> Also, this plugin will let `*` and `#` command work for arbitrary text selected in the Visual mode just like they work for `<cword>`.  
+> Also, this plugin will let `*` and `#` command work for arbitrarily selected text in Visual mode just like they work for `<cword>`.  
 
 
 These search related mappings can be configured further using `g:ja_search_mapleader` variable. For instance, define it like so in your .vimrc:
@@ -74,25 +79,31 @@ Then, you can prefix `<C-g>` for every quick search mappings in the plugin.
 ( `<C-g>sa` for `sa`, `<C-g>#f` for `#f,` and so on )
 
 #### :small_orange_diamond: Easy Use of Quickfix List ( :help ja-quickfix )
-`qft` will toggle the Quickfix window. While it is open, `q<CR>` will let you quickly jump to the Quickfix window from any other windows.
+`QT` will toggle the Quickfix window. While it is open, `q<CR>` will let you quickly jump to the Quickfix window from any other windows.
 
 The following mappings are available for the Quickfix and Location-list windows.
 
-    x       Open file and close the quickfix window.
+    x       Open the file on the cursor and close the Quickfix window.
 
-    s       Open file maintaining focus on the window.
+    s       Open the file on the cursor keeping focus on the Quickfix window.
 
-    t       Open in a new tab.
+    t       Open the file on the cursor in a new tab.
 
-    T       Open in a new tab maintaining focus on the window.
+    tt      Open the file on the cursor in a new tab keeping focus on the Quickfix window.
 
-    _       Open in a new horizontal split window.
+    tx      Open the file on the cursor in a new tab and close the Quickfix window.
 
-    __      Open in a new horizontal split window maintaining focus on the window.
+    _       Open the file on the cursor in a new horizontal split window.
 
-    |       Open in a new vertical split window.
+    __      Open the file on the cursor in a new horizontal split window keeping focus on the Quickfix window.
 
-    ||      Open in a new vertical split window maintaining focus on the window.
+    _x      Open the file on the cursor in a new horizontal split window and close the Quickfix window.
+
+    |       Open the file on the cursor in a new vertical split window.
+
+    ||      Open the file on the cursor in a new vertical split window keeping focus on the Quickfix window.
+
+    |x      Open the file on the cursor in a new vertical split window and close the Quickfix window.
 
 
 #### :small_orange_diamond: Configuration ( :help ja-configuration )
@@ -106,7 +117,7 @@ Also you can override default mappings using internal mapping names. For example
 
     nmap <leader>q <Plug>JumparoundToggleQuickfix
 
-will let you use `<leader>q` to toggle the Quickfix window instead of the default mapping `qft`.  
+will let you use `<leader>q` to toggle the Quickfix window instead of the default mapping `QT`.  
 ( `:help ja-mapping-override` for the complete list of the internal mapping names. )
 
 > **[TIP]** Use `g:ja_check_mapping_confliction` variable to check if mappings in the plugin conflict with your existing mappings.  
@@ -131,5 +142,4 @@ After installation, view the manual with `:help jumparound`
 Same terms as Vim itself. See [LICENSE.txt](LICENSE.txt) or type `:help license` in your Vim editor 
 
 * * *
-Updated by Suewon Bahng ( Sep 2017 )
-
+Updated by Suewon Bahng ( Jun 2025 )

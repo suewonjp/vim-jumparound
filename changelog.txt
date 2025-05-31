@@ -1,7 +1,24 @@
-Copyright (c) 2014-2017 Suewon Bahng, suewonjp@gmail.com
+Copyright (c) 2014-2025 Suewon Bahng, suewonjp@gmail.com
 
 Last Updated (2017-10-10)
 
+## Version 1.1.0 (2025-06-xx)
+- Add minor features as follow
+    - Mappings for jumping between tab pages now accept count.
+        - E.g. Typing `3<Alt + L>` jumps to the 3rd tab page from the current tab to the right.
+        - Count can be accepted only in Normal mode.
+    - Additional Quickfix mappings
+        - `tt`, `tx`, `_x`, `|x` added.
+        - See `ja-quickfix-window-mappings` for details.
+- Change some mappings
+    - `9<TAB>` now jumps to the last tab page no matter how many tabs there are.
+        - It used to jump to the 9th tab page in the previous version.
+    - Similarly `9<CR>` now jumps to the last window no matter how many windows there are.
+        - It used to jump to the 9th window in the previous version.
+    - Mapping for Quickfix Toggle is now `QT`, not `qft`. ( Typing `qft` triggers macro recording. )
+- Remove some mappings
+    - `qft` (Replaced with `QT`)
+    - Quickfix mapping `T` (Replaced with `tt`)
+
 ## Version 1.0.0 (2017-10-10)
 - First Release.
-

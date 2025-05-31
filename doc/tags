@@ -7,6 +7,7 @@
 1<TAB>	jumparound.txt	/*1<TAB>*
 2<CR>	jumparound.txt	/*2<CR>*
 2<TAB>	jumparound.txt	/*2<TAB>*
+9<TAB>	jumparound.txt	/*9<TAB>*
 :JaUpdateArgsFromBufs	jumparound.txt	/*:JaUpdateArgsFromBufs*
 :vg#	jumparound.txt	/*:vg#*
 :vg+	jumparound.txt	/*:vg+*
@@ -15,8 +16,6 @@
 <M-J>	jumparound.txt	/*<M-J>*
 <M-K>	jumparound.txt	/*<M-K>*
 <M-L>	jumparound.txt	/*<M-L>*
-<M-h>	jumparound.txt	/*<M-h>*
-<M-l>	jumparound.txt	/*<M-l>*
 <M-s>	jumparound.txt	/*<M-s>*
 <M-t>	jumparound.txt	/*<M-t>*
 <M-x>	jumparound.txt	/*<M-x>*
@@ -41,6 +40,7 @@
 <SPACE><CR>{mark}	jumparound.txt	/*<SPACE><CR>{mark}*
 <SPACE>{mark}	jumparound.txt	/*<SPACE>{mark}*
 JA	jumparound.txt	/*JA*
+QT	jumparound.txt	/*QT*
 Sa	jumparound.txt	/*Sa*
 Sf	jumparound.txt	/*Sf*
 g:ja_add_nr_cr_mappings	jumparound.txt	/*g:ja_add_nr_cr_mappings*
@@ -70,6 +70,7 @@ ja-xmap-star	jumparound.txt	/*ja-xmap-star*
 jumparound	jumparound.txt	/*jumparound*
 jumparound.txt	jumparound.txt	/*jumparound.txt*
 q<CR>	jumparound.txt	/*q<CR>*
-qft	jumparound.txt	/*qft*
 sa	jumparound.txt	/*sa*
 sf	jumparound.txt	/*sf*
+{count}<M-h>	jumparound.txt	/*{count}<M-h>*
+{count}<M-l>	jumparound.txt	/*{count}<M-l>*

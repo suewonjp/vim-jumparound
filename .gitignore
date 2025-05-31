@@ -3,8 +3,6 @@
 .swp
 .orig
 .log
-.trashcan
 Session.vim
-.vimrc
-.memo
-
+.exrc*
+.env*
