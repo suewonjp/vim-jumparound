@@ -1,8 +1,8 @@
 Copyright (c) 2014-2025 Suewon Bahng, suewonjp@gmail.com
 
-Last Updated (2017-10-10)
+Last Updated (2025-06-01)
 
-## Version 1.1.0 (2025-06-xx)
+## Version 1.1.0 (2025-06-01)
 - Add minor features as follow
     - Mappings for jumping between tab pages now accept count.
         - E.g. Typing `3<Alt + L>` jumps to the 3rd tab page from the current tab to the right.
