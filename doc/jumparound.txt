@@ -423,3 +423,5 @@ The internal mapping for |QT|
 
 *<Plug>JumparoundGoToQuickfixWin*
 The internal mapping for |q<CR>|
+
+vim:ft=help:
