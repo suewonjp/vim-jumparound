@@ -228,8 +228,8 @@ function! jumparound#AddMappingsForQuickfix()
         \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>gt
   nnoremap <buffer><silent> tt
         \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>
-  nnoremap <buffer><silent> T
-        \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>
+  nnoremap <buffer><silent> tx
+        \ :<C-u>call jumparound#OpenTabFromQuickfix()<CR>:cclose<CR>
   nnoremap <buffer><silent> x <CR>:cclose<CR>
   nnoremap <buffer><silent> s
         \ <CR>:<C-u>call jumparound#GoToQuickfixWin()<CR>
