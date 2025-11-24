@@ -57,27 +57,6 @@ Type `<M-t>` to open a file explorer in a new tab page.
 
 Type `<M-x>` to open a file explorer in a new vertical split window. ( Type `<M-x>` again, to close it )
 
-#### :small_orange_diamond: Quick Text Search ( :help ja-quick-search )
-`sa` will search the argument-list for the pattern stored in `@/` register and automatically open the Quickfix window.
-
-`sf` will search files under the current working directory for the pattern stored in `@/` register and automatically open the Quickfix window.
-
-`#a` will search the argument-list for `<cword>` and automatically open the Quickfix window.
-
-`#f` will search files under the current working directory for `<cword>` and automatically open the Quickfix window.
-
-`#a` and `#f` will also work for arbitrary text selected in the Visual mode.
-
-> Also, this plugin will let `*` and `#` command work for arbitrarily selected text in Visual mode just like they work for `<cword>`.  
-
-
-These search related mappings can be configured further using `g:ja_search_mapleader` variable. For instance, define it like so in your .vimrc:
-
-	let g:ja_search_mapleader = '<C-g>'
-
-Then, you can prefix `<C-g>` for every quick search mappings in the plugin.
-( `<C-g>sa` for `sa`, `<C-g>#f` for `#f,` and so on )
-
 #### :small_orange_diamond: Easy Use of Quickfix List ( :help ja-quickfix )
 `QT` will toggle the Quickfix window. While it is open, `q<CR>` will let you quickly jump to the Quickfix window from any other windows.
 

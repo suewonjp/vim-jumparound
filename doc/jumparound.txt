@@ -2,7 +2,7 @@
 
 ==============================================================================
 Author:       Suewon Bahng <https://github.com/suewonjp/>
-Version:      1.1.0
+Version:      1.2.0
 License: Same terms as Vim itself (see |license|)
 ==============================================================================
 
@@ -137,7 +137,7 @@ It's quicker than pressing <CR> and <ESC>.
 It will save the current buffer and let your mode switch to the Normal mode.
 You can use it in the Normal mode, Insert mode, Command mode, Visual mode.
 It's obviously quicker than typing |:w| and pressing <ESC>.
-An additional small advantage is it won't polute the command line history
+An additional small advantage is it won't pollute the command line history
 unlike |:w|.
 
 QUICK TEXT SEARCH                                   *ja-quick-search*
@@ -160,6 +160,7 @@ then add the following code in your .vimrc. >
 >
 ~
                                                                  *sa*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 It will search the |argument-list| for the pattern stored in |@/| register.
 Mostly, what you do before executing this mapping would be searching the
 current buffer for the pattern, which you can quickly execute with *(|star| )
@@ -173,6 +174,7 @@ Also see |g:ja_search_mapleader| for how to make these search related mappings
 not conflicting with your existing mappings.
                                                                               
                                                                  *sf*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 Same as  |sa| except that it will recursively search files in the current
 working directory.
 It may be possibly very slow depending on the number of files to visit.
@@ -182,26 +184,31 @@ Example: >
 >
 ~
                                                                  *Sa*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 Same as |sa| except the search result will use |location-list| instead of
  |quickfix| list.
 Note that you CAN'T use |QT| mapping to toggle the |location-list| window.
 Use|:lopen| or|:lclose|command instead.
 
                                                                  *Sf*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 Same as |sf| except the search result will use |location-list| instead of
  |quickfix| list.
 Note that you CAN'T use |QT| mapping to toggle the |location-list| window.
 Use |:lopen| or |:lclose| command instead.
 
                                                                  *#a*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 It will search the |argument-list| for the word under the cursor(<cword>) or
 arbitrary text selected in the Visual mode.
 
                                                                  *#f*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 Same as |#a| that it will recursively search files in the current working
 directory. Also, see |sf| for a possible performance issue.
 
                                                                *:vg#*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 It is a Command mode abbreviation. It will expand out a command template
 which you can edit and customize for your need. After editing complete,
 press <CR> to execute the command.
@@ -209,12 +216,14 @@ You may need to be a little familiar with |vimgrep| command to put this
 abbreviation to good use.
 
                                                       :vg*  *:vgstar*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 Same as |:vg#| abbreviation except that it will use ** instead of ## (|_##|)
 for its target object notation.
 That means it will search files in the current working directory recursively
 if you leave the notation as it is. (Same behavior as |sf|  or |Sf|  or |#f|)
 
                                                                *:vg+*
+*DEPRECATED* (This feature is disabled by default since v1.2.0 and will be removed)
 Same as |:vg#| or |:vgstar| except that it won't print the target notation such
 as ** or ## (|_##|). You should specify the target files or paths to search
 with |vimgrep| command on your own.
@@ -316,6 +325,7 @@ marks ( See |ja-jump-to-marks|) by adding the following code in your .vimrc >
     let g:ja_add_space_marks = 0
 <
                                               *g:ja_search_mapleader*
+*DEPRECATED* (Will be removed in the future)
 If mappings for |ja-quick-search| are conflicting, define this global variable
 with non empty key. ( The default value is an empty string )
 Example: >
@@ -326,16 +336,17 @@ Example: >
     ( <C-g>sa for |sa| , <C-g>#f for |#f|, and so on)
 
 Note that this is not |mapleader| , and it only applies to the |ja-quick-search|
-mappings.
+mappings. (WARNING: |ja-quick-search| feature will be removed in the future)
 
                                                  *g:ja_add_xmap_star*
 See |ja-xmap-star| for the usage of this global variable.
 
                                              *g:ja_add_search_cabbrs*
-If you want to DISABLE |:vg+|, |:vgstar|, |:vg#| command line abbreviations,
+*DEPRECATED* (Will be removed in the future)
+If you want to ENABLE |:vg+|, |:vgstar|, |:vg#| command line abbreviations,
 add the following code in your .vimrc >
 
-	let g:ja_add_search_cabbrs = 0
+	let g:ja_add_search_cabbrs = 1
 
 ~
                                                  *g:ja_mark_prefix*

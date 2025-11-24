@@ -1,7 +1,7 @@
 " ============================================================================
 " Vim-JumpAround
 " Author:       Suewon Bahng <https://github.com/suewonjp/>
-" Version:      1.1.0
+" Version:      1.2.0
 " ============================================================================
 
 if exists('g:loaded_jumparound') || &cp || v:version < 800
@@ -234,6 +234,10 @@ if ! exists('g:ja_search_mapleader')
   let g:ja_search_mapleader = ''
 endif
 
+if ! exists('g:ja_add_search_cabbrs')
+  let g:ja_add_search_cabbrs = 0
+endif
+
 " * or # command for arbitrary text selected in the Visual mode {{{2
 function! <SID>MapXmapStar(cmd)
   let l:tmp = @t
@@ -256,61 +260,63 @@ endif
 " }}}2
 
 " Normal mode mappings for quick text search {{{2
+if g:ja_search_mapleader
 
-" Search the argument list for the pattern stored in @/ register
-call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'sa',
-      \ ':<C-u>silent noautocmd vimgrep! /\V<C-r>//j ##' .
-      \ ' \| call jumparound#OpenQuickfix()<CR>',
-      \ '<Plug>JumparoundSearchArgList')
+  " Search the argument list for the pattern stored in @/ register
+  call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'sa',
+        \ ':<C-u>silent noautocmd vimgrep! /\V<C-r>//j ##' .
+        \ ' \| call jumparound#OpenQuickfix()<CR>',
+        \ '<Plug>JumparoundSearchArgList')
 
-" Search files for the pattern stored in @/ register.
-call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'sf',
-      \ ':<C-u>silent noautocmd vimgrep! /\V<C-r>//j **' .
-      \ ' \| call jumparound#OpenQuickfix()<CR>',
-      \ '<Plug>JumparoundSearchFiles')
+  " Search files for the pattern stored in @/ register.
+  call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'sf',
+        \ ':<C-u>silent noautocmd vimgrep! /\V<C-r>//j **' .
+        \ ' \| call jumparound#OpenQuickfix()<CR>',
+        \ '<Plug>JumparoundSearchFiles')
 
-" Same as 'sa' or 'sf' mappings except the search result will use
-" 'location list' instead of 'quickfix list' (:help location-list) 
-call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'Sa',
-      \ ':<C-u>silent noautocmd lvimgrep! /\V<C-r>//j ##' .
-      \ ' \| call jumparound#OpenLocationList()<CR>',
-      \ '<Plug>JumparoundSearchArgListLoc')
+  " Same as 'sa' or 'sf' mappings except the search result will use
+  " 'location list' instead of 'quickfix list' (:help location-list) 
+  call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'Sa',
+        \ ':<C-u>silent noautocmd lvimgrep! /\V<C-r>//j ##' .
+        \ ' \| call jumparound#OpenLocationList()<CR>',
+        \ '<Plug>JumparoundSearchArgListLoc')
 
-call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'Sf',
-      \ ':<C-u>silent noautocmd lvimgrep! /\V<C-r>//j **' .
-      \ ' \| call jumparound#OpenLocationList()<CR>',
-      \ '<Plug>JumparoundSearchFilesLoc')
+  call <SID>MapForSingleMode('n', g:ja_search_mapleader . 'Sf',
+        \ ':<C-u>silent noautocmd lvimgrep! /\V<C-r>//j **' .
+        \ ' \| call jumparound#OpenLocationList()<CR>',
+        \ '<Plug>JumparoundSearchFilesLoc')
 
-" Search the argument list for <cword>
-call <SID>MapForSingleMode('n', g:ja_search_mapleader . '#a',
-      \ '*:<C-u>silent noautocmd vimgrep! /\V<C-r>//j ##' .
-      \ ' \| call jumparound#OpenQuickfix()<CR>',
-      \ '<Plug>JumparoundQuickSearchArgList')
+  " Search the argument list for <cword>
+  call <SID>MapForSingleMode('n', g:ja_search_mapleader . '#a',
+        \ '*:<C-u>silent noautocmd vimgrep! /\V<C-r>//j ##' .
+        \ ' \| call jumparound#OpenQuickfix()<CR>',
+        \ '<Plug>JumparoundQuickSearchArgList')
 
-" Search files for <cword>
-call <SID>MapForSingleMode('n', g:ja_search_mapleader . '#f',
-      \ '*:<C-u>silent noautocmd vimgrep! /\V<C-r>//j **' .
-      \ ' \| call jumparound#OpenQuickfix()<CR>',
-      \ '<Plug>JumparoundQuickSearchFiles')
+  " Search files for <cword>
+  call <SID>MapForSingleMode('n', g:ja_search_mapleader . '#f',
+        \ '*:<C-u>silent noautocmd vimgrep! /\V<C-r>//j **' .
+        \ ' \| call jumparound#OpenQuickfix()<CR>',
+        \ '<Plug>JumparoundQuickSearchFiles')
 
-" Search the argument list for the text selected in the Visual mode
-call <SID>MapForSingleMode('x', g:ja_search_mapleader . '#a',
-      \ ' :<C-u>call <SID>MapXmapStar("/")<CR>/<C-r>=@/<CR><CR>' .
-      \ ' :silent noautocmd vimgrep! /\V<C-r>//j ##' .
-      \ ' \| call jumparound#OpenQuickfix()<CR>',
-      \ '<Plug>JumparoundQuickSearchArgList')
+  " Search the argument list for the text selected in the Visual mode
+  call <SID>MapForSingleMode('x', g:ja_search_mapleader . '#a',
+        \ ' :<C-u>call <SID>MapXmapStar("/")<CR>/<C-r>=@/<CR><CR>' .
+        \ ' :silent noautocmd vimgrep! /\V<C-r>//j ##' .
+        \ ' \| call jumparound#OpenQuickfix()<CR>',
+        \ '<Plug>JumparoundQuickSearchArgList')
 
-" Search files for the text selected in the Visual mode
-call <SID>MapForSingleMode('x', g:ja_search_mapleader . '#f',
-      \ ' :<C-u>call <SID>MapXmapStar("/")<CR>/<C-r>=@/<CR><CR>' .
-      \ ' :silent noautocmd vimgrep! /\V<C-r>//j **' .
-      \ ' \| call jumparound#OpenQuickfix()<CR>',
-      \ '<Plug>JumparoundQuickSearchFiles')
+  " Search files for the text selected in the Visual mode
+  call <SID>MapForSingleMode('x', g:ja_search_mapleader . '#f',
+        \ ' :<C-u>call <SID>MapXmapStar("/")<CR>/<C-r>=@/<CR><CR>' .
+        \ ' :silent noautocmd vimgrep! /\V<C-r>//j **' .
+        \ ' \| call jumparound#OpenQuickfix()<CR>',
+        \ '<Plug>JumparoundQuickSearchFiles')
 
+endif
 " }}}2
 
 " Command mode abbreviations for more flexibility {{{2
-if ! exists('g:ja_add_search_cabbrs') || g:ja_add_search_cabbrs
+if g:ja_add_search_cabbrs
   call <SID>AbbrForSingleMode('c', 'vg+',
         \ '<C-u>silent noautocmd vimgrep /\V<C-r>//j' .
         \ ' \| call jumparound#OpenQuickfix()<S-Left><S-Left><S-Left><Left>')
