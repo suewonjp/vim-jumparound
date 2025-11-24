@@ -1,6 +1,15 @@
 Copyright (c) 2014-2025 Suewon Bahng, suewonjp@gmail.com
 
-Last Updated (2025-06-01)
+Last Updated (2025-11-24)
+
+## Version 1.2.0 (2025-11-24)
+- Fix an issue where code and document didn't match around a mapping using `jumparound#OpenTabFromQuickfix()`
+- Fix an issue where helps are rendered as plain text on Neovim
+- Deprecate Mappings for Quick Search
+    - The following mappings and command mode abbreviations are now disabled by default.
+        - Mappings: sa, sf, Sa, Sf, #a, #f 
+        - Command mode abbreviations: vg+, vg#, vg*
+    - Those will be removed in the future.
 
 ## Version 1.1.0 (2025-06-01)
 - Add minor features as follow
